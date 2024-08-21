@@ -1,6 +1,6 @@
 import pytest
 
-from my_service.example import hello
+from api.example import hello
 
 @pytest.mark.parametrize(
     ("name", "expected"),

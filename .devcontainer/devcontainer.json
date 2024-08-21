@@ -9,7 +9,7 @@
     }
   },
   "containerEnv": {
-    "AWS_PROFILE": "my-profile"
+    "AWS_PROFILE": "dev"
   },
   // ensures we are NOT running as root
   "remoteUser": "vscode",

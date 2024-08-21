@@ -13,12 +13,16 @@ readme = "README.md"
 [tool.poetry.group.dev.dependencies]
 projen = "0.81.1"
 
+  [tool.poetry.group.dev.dependencies.api]
+  path = "./api"
+  develop = true
+
   [tool.poetry.group.dev.dependencies.iac]
   path = "./iac"
   develop = true
 
-  [tool.poetry.group.dev.dependencies.my_service]
-  path = "./my-service"
+  [tool.poetry.group.dev.dependencies.indexer]
+  path = "./indexer"
   develop = true
 
 [build-system]

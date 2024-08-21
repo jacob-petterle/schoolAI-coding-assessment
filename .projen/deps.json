@@ -1,13 +1,18 @@
 {
   "dependencies": [
     {
+      "name": "api",
+      "version": "{path = './api', develop = true}",
+      "type": "devenv"
+    },
+    {
       "name": "iac",
       "version": "{path = './iac', develop = true}",
       "type": "devenv"
     },
     {
-      "name": "my_service",
-      "version": "{path = './my-service', develop = true}",
+      "name": "indexer",
+      "version": "{path = './indexer', develop = true}",
       "type": "devenv"
     },
     {

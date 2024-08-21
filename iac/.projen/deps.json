@@ -11,6 +11,11 @@
       "type": "runtime"
     },
     {
+      "name": "aws-cdk.aws-lambda-python-alpha",
+      "version": "^2.153.0a0",
+      "type": "runtime"
+    },
+    {
       "name": "python",
       "version": "^3.10",
       "type": "runtime"

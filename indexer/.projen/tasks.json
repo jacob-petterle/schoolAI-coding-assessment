@@ -21,16 +21,6 @@
         }
       ]
     },
-    "cdk-deploy": {
-      "name": "cdk-deploy",
-      "steps": [
-        {
-          "exec": "export AWS_PROFILE=dev && npx cdk deploy --app 'python app.py' --require-approval never --asset-parallelism --asset-prebuild false --concurrency 5",
-          "receiveArgs": true
-        }
-      ],
-      "cwd": "./iac"
-    },
     "compile": {
       "name": "compile",
       "description": "Only compile"

@@ -6,23 +6,28 @@
       "type": "devenv"
     },
     {
-      "name": "requests",
-      "version": "^2.26.0",
-      "type": "devenv"
+      "name": "aws-lambda-powertools",
+      "version": "^2.43.1",
+      "type": "runtime"
     },
     {
       "name": "fastapi",
-      "version": "^0.68.0",
+      "version": "^0.112.1",
+      "type": "runtime"
+    },
+    {
+      "name": "mangum",
+      "version": "^0.17.0",
+      "type": "runtime"
+    },
+    {
+      "name": "pydantic",
+      "version": "^2.8.0",
       "type": "runtime"
     },
     {
       "name": "python",
       "version": "^3.10",
-      "type": "runtime"
-    },
-    {
-      "name": "uvicorn",
-      "version": "^0.15.0",
       "type": "runtime"
     },
     {
