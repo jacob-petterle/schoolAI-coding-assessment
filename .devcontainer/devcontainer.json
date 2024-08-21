@@ -1,0 +1,220 @@
+{
+  "name": "Node.js & TypeScript",
+  "build": {
+    "dockerfile": "./Dockerfile",
+    "context": "..",
+    "args": {
+      "VARIANT": "python:3.10",
+      "USERNAME": "vscode"
+    }
+  },
+  "containerEnv": {
+    "AWS_PROFILE": "my-profile"
+  },
+  // ensures we are NOT running as root
+  "remoteUser": "vscode",
+  "mounts": [
+    // mounts your .aws for use with the AWS CLI
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.aws,target=/home/vscode/.aws,type=bind,consistency=cached",
+    // mounts your .ssh for use with git
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached",
+    // saves your command history for use in the next session
+    "source=projectname-bashhistory,target=/commandhistory,type=volume"
+  ],
+  // // we need this set so that the workspace folder is mounted correctly with docker outside of docker
+  // // see: https://github.com/devcontainers/features/tree/main/src/docker-outside-of-docker
+  // "remoteEnv": {
+  //   "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
+  // },
+  "workspaceFolder": "${localWorkspaceFolder}",
+  "workspaceMount": "source=${localWorkspaceFolder},target=${localWorkspaceFolder},type=bind",
+  "runArgs": ["--cpus=8", "--memory=15g"],
+  "hostRequirements": {
+    "memory": "15gb",
+    "cpus": 8
+  },
+  // create and empty .ssh and .aws directories incase they don't exist to prevent failure of mounts
+  "initializeCommand": "mkdir -p ${localEnv:HOME}${localEnv:USERPROFILE}/.ssh && mkdir -p ${localEnv:HOME}${localEnv:USERPROFILE}/.aws",
+  "updateContentCommand": "poetry update",
+  "postCreateCommand": "projen",
+  "postStartCommand": "aws sso login --profile $AWS_PROFILE --no-browser || (echo \"\nERROR: Please set up AWS SSO with `${AWS_PROFILE}` profile. See README.md for instructions.\n\" >&2 && exit 1)",
+  "features": {
+    // this is less performant, but couldn't get cdk synth working
+    // when running docker outside of docker with ARM
+    // "ghcr.io/devcontainers/features/docker-in-docker:2": {
+    //   // the latest version caused a build failure on 3/6/2024
+    //   // we are pinning for now. Probably should be updated
+    //   // to the latest version once the issue is resolved
+    //   "dockerDashComposeVersion": "2.24.0"
+    // },
+    "ghcr.io/devcontainers/features/docker-outside-of-docker": {},
+    // for sonar lint
+    "ghcr.io/devcontainers/features/aws-cli:1": {},
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "configureZshAsDefaultShell": true,
+      "installOhMyZsh": true,
+      "installOhMyZshConfig": true,
+      "upgradePackages": true,
+      "username": "automatic",
+      "userUid": "automatic",
+      "userGid": "automatic"
+    },
+    "ghcr.io/devcontainers/features/git:1": {
+      "ppa": true,
+      "version": "os-provided"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "installDirectlyFromGitHubRelease": true,
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-contrib/features/aws-cdk:2": {},
+    "ghcr.io/devcontainers-contrib/features/projen:1": {},
+    "ghcr.io/devcontainers-contrib/features/poetry:2": {}
+  },
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  // "forwardPorts": [],
+  // Use 'postCreateCommand' to run commands after the container is created.
+  // Configure tool-specific properties.
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "streetsidesoftware.code-spell-checker",
+        "mhutchie.git-graph",
+        "GitHub.copilot",
+        "VisualStudioExptTeam.vscodeintellicode",
+        "ms-vsliveshare.vsliveshare",
+        "GitHub.vscode-pull-request-github",
+        "SonarSource.sonarlint-vscode",
+        "ms-python.vscode-pylance",
+        "ms-python.python",
+        "ms-python.debugpy",
+        "Boto3typed.boto3-ide",
+        "ms-python.black-formatter",
+        "ms-python.pylint",
+        "ms-python.flake8",
+        "ms-python.isort",
+        "donjayamanne.githistory",
+        "github.vscode-github-actions",
+        "yzhang.markdown-all-in-one",
+        "donjayamanne.python-environment-manager",
+        "eamodio.gitlens",
+        "rvest.vs-code-prettier-eslint",
+        "esbenp.prettier-vscode",
+        "MatthewNespor.vscode-color-identifiers-mode",
+        "oderwat.indent-rainbow",
+        "fabiospampinato.vscode-highlight"
+      ],
+      "settings": {
+        "highlight.regexes": {
+          "((?:<!-- *)?(?:#|// @|//|./\\*+|<!--|--|\\* @|{!|{{!--|{{!) *TODO(?:\\s*\\([^)]+\\))?:?)((?!\\w)(?: *-->| *\\*/| *!}| *--}}| *}}|(?= *(?:[^:]//|/\\*+|<!--|@|--|{!|{{!--|{{!))|(?: +[^\\n@]*?)(?= *(?:[^:]//|/\\*+|<!--|@|--(?!>)|{!|{{!--|{{!))|(?: +[^@\\n]+)?))": {
+            "filterFileRegex": ".*(?<!CHANGELOG.md)$",
+            "decorations": [
+              {
+                "overviewRulerColor": "#ffcc00",
+                "backgroundColor": "#ffcc00",
+                "color": "#1f1f1f",
+                "fontWeight": "bold"
+              },
+              {
+                "backgroundColor": "#ffcc00",
+                "color": "#1f1f1f"
+              }
+            ]
+          },
+          "((?:<!-- *)?(?:#|// @|//|./\\*+|<!--|--|\\* @|{!|{{!--|{{!) *(?:FIXME|FIX|BUG|UGLY|DEBUG|HACK)(?:\\s*\\([^)]+\\))?:?)((?!\\w)(?: *-->| *\\*/| *!}| *--}}| *}}|(?= *(?:[^:]//|/\\*+|<!--|@|--|{!|{{!--|{{!))|(?: +[^\\n@]*?)(?= *(?:[^:]//|/\\*+|<!--|@|--(?!>)|{!|{{!--|{{!))|(?: +[^@\\n]+)?))": {
+            "filterFileRegex": ".*(?<!CHANGELOG.md)$",
+            "decorations": [
+              {
+                "overviewRulerColor": "#cc0000",
+                "backgroundColor": "#cc0000",
+                "color": "#1f1f1f",
+                "fontWeight": "bold"
+              },
+              {
+                "backgroundColor": "#cc0000",
+                "color": "#1f1f1f"
+              }
+            ]
+          },
+          "((?:<!-- *)?(?:#|// @|//|./\\*+|<!--|--|\\* @|{!|{{!--|{{!) *(?:REVIEW|OPTIMIZE|TSC)(?:\\s*\\([^)]+\\))?:?)((?!\\w)(?: *-->| *\\*/| *!}| *--}}| *}}|(?= *(?:[^:]//|/\\*+|<!--|@|--|{!|{{!--|{{!))|(?: +[^\\n@]*?)(?= *(?:[^:]//|/\\*+|<!--|@|--(?!>)|{!|{{!--|{{!))|(?: +[^@\\n]+)?))": {
+            "filterFileRegex": ".*(?<!CHANGELOG.md)$",
+            "decorations": [
+              {
+                "overviewRulerColor": "#00ccff",
+                "backgroundColor": "#00ccff",
+                "color": "#1f1f1f",
+                "fontWeight": "bold"
+              },
+              {
+                "backgroundColor": "#00ccff",
+                "color": "#1f1f1f"
+              }
+            ]
+          },
+          "((?:<!-- *)?(?:#|// @|//|./\\*+|<!--|--|\\* @|{!|{{!--|{{!) *(?:IDEA)(?:\\s*\\([^)]+\\))?:?)((?!\\w)(?: *-->| *\\*/| *!}| *--}}| *}}|(?= *(?:[^:]//|/\\*+|<!--|@|--|{!|{{!--|{{!))|(?: +[^\\n@]*?)(?= *(?:[^:]//|/\\*+|<!--|@|--(?!>)|{!|{{!--|{{!))|(?: +[^@\\n]+)?))": {
+            "filterFileRegex": ".*(?<!CHANGELOG.md)$",
+            "decorations": [
+              {
+                "overviewRulerColor": "#cc00cc",
+                "backgroundColor": "#cc00cc",
+                "color": "#1f1f1f",
+                "fontWeight": "bold"
+              },
+              {
+                "backgroundColor": "#cc00cc",
+                "color": "#1f1f1f"
+              }
+            ]
+          },
+          "((?:<!-- *)?(?:#|// @|//|./\\*+|<!--|--|\\* @|{!|{{!--|{{!) *(?:COMPLETE)(?:\\s*\\([^)]+\\))?:?)((?!\\w)(?: *-->| *\\*/| *!}| *--}}| *}}|(?= *(?:[^:]//|/\\*+|<!--|@|--|{!|{{!--|{{!))|(?: +[^\\n@]*?)(?= *(?:[^:]//|/\\*+|<!--|@|--(?!>)|{!|{{!--|{{!))|(?: +[^@\\n]+)?))": {
+            "filterFileRegex": ".*(?<!CHANGELOG.md)$",
+            "decorations": [
+              {
+                "overviewRulerColor": "#00CC5F",
+                "backgroundColor": "#00CC44",
+                "color": "#1f1f1f",
+                "fontWeight": "bold"
+              },
+              {
+                "backgroundColor": "#00CC3D",
+                "color": "#1f1f1f"
+              }
+            ]
+          },
+          "(\\w+)(=)": [
+            {
+              "color": "#D19A66"
+            }
+          ]
+        },
+        "dev.containers.copyGitConfig": true,
+        "python.terminal.activateEnvInCurrentTerminal": true,
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "git.enableSmartCommit": true,
+        "git.confirmSync": false,
+        "git.autofetch": true,
+        "github.copilot.enable": {
+          "*": true
+        },
+        "git.pruneOnFetch": true,
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "python.testing.pytestArgs": [
+          "${workspaceFolder}/tests"
+        ],
+        "[python]": {
+          "editor.defaultFormatter": "ms-python.black-formatter"
+        },
+        "python.testing.unittestEnabled": false,
+        "python.testing.pytestEnabled": true,
+        "python.testing.nosetestsEnabled": false,
+        "editor.formatOnType": false,
+        "editor.formatOnPaste": true,
+        "editor.formatOnSave": true,
+        "editor.formatOnSaveMode": "file",
+        "files.autoSaveDelay": 500,
+        "files.autoSave": "afterDelay"
+      }
+    }
+  }
+}
