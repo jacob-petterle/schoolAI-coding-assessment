@@ -109,7 +109,12 @@ class RAGStack(Stack):
         )
 
         lambda_function, _ = self._get_lambda(lambda_config)
-
+        lambda_function.add_to_role_policy(
+            statement=iam.PolicyStatement(
+                actions=["bedrock:InvokeModel"],
+                resources=["*"],
+            )
+        )
         lambda_function.add_event_source(
             lambda_events.SqsEventSource(
                 queue,
@@ -134,13 +139,6 @@ class RAGStack(Stack):
         )
         api_lambda, function_url = self._get_lambda(api_lambda_config)
         bucket.grant_read_write(api_lambda)
-        # add this to policy:                 "bedrock:InvokeModel",
-        api_lambda.add_to_role_policy(
-            statement=iam.PolicyStatement(
-                actions=["bedrock:InvokeModel"],
-                resources=["*"],
-            )
-        )
         CfnOutput(self, "ApiUrl", value=function_url.url)
 
     def _get_lambda(

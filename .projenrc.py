@@ -96,7 +96,7 @@ INDEXER_PROJECT = PythonProject(
     dev_deps=[
         "pytest@^6.2.5",
         "requests@^2.26.0",
-        "boto3-stubs@{version = '^1.34.105', extras = ['s3', 'bedrock']}",
+        "boto3-stubs@{version = '^1.34.105', extras = ['s3', 'bedrock-runtime']}",
     ],
 )
 

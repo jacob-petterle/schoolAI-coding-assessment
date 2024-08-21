@@ -45,4 +45,4 @@ class Extract:
         return table.to_pylist()
 
 
-EXTRACTOR = Extract(Settings())  # type: ignore - pulled from env
+EXTRACT = Extract(Settings())  # type: ignore - pulled from env

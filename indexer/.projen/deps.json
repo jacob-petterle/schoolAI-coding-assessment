@@ -2,7 +2,7 @@
   "dependencies": [
     {
       "name": "boto3-stubs",
-      "version": "{version = '^1.34.105', extras = ['s3', 'bedrock']}",
+      "version": "{version = '^1.34.105', extras = ['s3', 'bedrock-runtime']}",
       "type": "devenv"
     },
     {

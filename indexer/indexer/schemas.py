@@ -1,3 +1,4 @@
+from typing import List
 from pydantic import BaseModel
 
 
@@ -16,3 +17,11 @@ class TransformedData(BaseModel):
     question: str
     correct_answer: str
     support: str
+
+
+class TransformedDataWithEmbedding(BaseModel):
+
+    question: str
+    correct_answer: str
+    support: str
+    embedding: List[float]
