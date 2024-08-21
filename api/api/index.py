@@ -4,6 +4,8 @@ from fastapi import APIRouter, FastAPI
 from mangum import Mangum
 
 from api.settings import Settings
+from api.routers.documents import ROUTER as DOCUMENTS_ROUTER
+
 
 SETTINGS = Settings()
 LOGGER = Logger(level=SETTINGS.log_level)
@@ -12,13 +14,14 @@ LOGGER = Logger(level=SETTINGS.log_level)
 ROUTER = APIRouter(prefix="/health-check", tags=["health-check"])
 
 
-@ROUTER.get("/health-check")
+@ROUTER.get("/")
 def health_check():
     return {"status": "ok"}
 
 
 ROUTERS = [
     ROUTER,
+    DOCUMENTS_ROUTER,
 ]
 
 
@@ -27,14 +30,12 @@ def create_app():
     settings = Settings()  # type: ignore - pulled from the environment
     LOGGER.debug("Creating FastAPI app", body=settings)
 
-    # Create app
     app = FastAPI(
         title="SchoolAI RAG coding challenge",
         description="API for the RAG system",
         version="0.0.0",
     )
 
-    # Add routers
     for router in ROUTERS:
         app.include_router(router)
 

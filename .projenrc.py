@@ -85,11 +85,18 @@ INDEXER_PROJECT = PythonProject(
     version="0.0.0",
     description="Indexer for the documents",
     poetry=True,
-    deps=[PYTHON_DEP, "aws-lambda-powertools@^2.43.1", "pydantic@^2.8.0", "pyarrow@^17.0.0", "boto3@^1.35.2", "pydantic-settings@^2.4.0"],
+    deps=[
+        PYTHON_DEP,
+        "aws-lambda-powertools@^2.43.1",
+        "pydantic@^2.8.0",
+        "pyarrow@^17.0.0",
+        "boto3@^1.35.2",
+        "pydantic-settings@^2.4.0",
+    ],
     dev_deps=[
         "pytest@^6.2.5",
         "requests@^2.26.0",
-        "boto3-stubs@{version = '^1.34.105', extras = ['s3']}",
+        "boto3-stubs@{version = '^1.34.105', extras = ['s3', 'bedrock']}",
     ],
 )
 
@@ -104,7 +111,15 @@ API_PROJECT = PythonProject(
     version="0.0.0",
     description="API for the RAG system",
     poetry=True,
-    deps=[PYTHON_DEP, "fastapi@^0.112.1", "pydantic@^2.8.0", "mangum@^0.17.0", "aws-lambda-powertools@^2.43.1"],
+    deps=[
+        PYTHON_DEP,
+        "fastapi@^0.112.1",
+        "pydantic@^2.8.0",
+        "mangum@^0.17.0",
+        "aws-lambda-powertools@^2.43.1",
+        "pydantic-settings@^2.4.0",
+        "python-multipart@^0.0.9",
+    ],
     dev_deps=[
         "pytest@^6.2.5",
     ],

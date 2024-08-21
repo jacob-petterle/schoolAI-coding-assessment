@@ -9,3 +9,4 @@ class Settings(PydanticBaseSettings):
         extra="ignore",
     )
     log_level: str = "DEBUG"
+    s3_bucket_name: str

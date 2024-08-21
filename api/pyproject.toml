@@ -11,7 +11,9 @@ readme = "README.md"
   aws-lambda-powertools = "^2.43.1"
   fastapi = "^0.112.1"
   mangum = "^0.17.0"
+  pydantic-settings = "^2.4.0"
   pydantic = "^2.8.0"
+  python-multipart = "^0.0.9"
   python = "^3.10"
 
 [tool.poetry.group.dev.dependencies]

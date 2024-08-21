@@ -9,6 +9,7 @@ import aws_cdk.aws_s3 as s3
 import aws_cdk.aws_s3_notifications as s3n
 import aws_cdk.aws_sqs as sqs
 import aws_cdk.aws_logs as logs
+import aws_cdk.aws_iam as iam
 import aws_cdk.aws_lambda_event_sources as lambda_events
 import aws_cdk.aws_secretsmanager as secretsmanager
 import aws_cdk.aws_lambda_python_alpha as lambda_alpha
@@ -17,6 +18,7 @@ from pydantic_settings import BaseSettings
 
 
 from indexer.settings import Settings as IndexerSettings
+from api.settings import Settings as ApiSettings
 
 
 @dataclass
@@ -128,8 +130,17 @@ class RAGStack(Stack):
                 auth_type=_lambda.FunctionUrlAuthType.NONE,
                 invoke_mode=_lambda.InvokeMode.BUFFERED,
             ),
+            environment=ApiSettings(s3_bucket_name=bucket.bucket_name),
         )
-        _, function_url = self._get_lambda(api_lambda_config)
+        api_lambda, function_url = self._get_lambda(api_lambda_config)
+        bucket.grant_read_write(api_lambda)
+        # add this to policy:                 "bedrock:InvokeModel",
+        api_lambda.add_to_role_policy(
+            statement=iam.PolicyStatement(
+                actions=["bedrock:InvokeModel"],
+                resources=["*"],
+            )
+        )
         CfnOutput(self, "ApiUrl", value=function_url.url)
 
     def _get_lambda(

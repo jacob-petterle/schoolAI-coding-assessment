@@ -68,6 +68,7 @@ files = [
 
 [package.dependencies]
 botocore-stubs = "*"
+mypy-boto3-bedrock = {version = ">=1.35.0,<1.36.0", optional = true, markers = "extra == \"bedrock\""}
 mypy-boto3-s3 = {version = ">=1.35.0,<1.36.0", optional = true, markers = "extra == \"s3\""}
 types-s3transfer = "*"
 typing-extensions = {version = ">=4.1.0", markers = "python_version < \"3.12\""}
@@ -668,6 +669,20 @@ files = [
 ]
 
 [[package]]
+name = "mypy-boto3-bedrock"
+version = "1.35.1"
+description = "Type annotations for boto3.Bedrock 1.35.1 service generated with mypy-boto3-builder 7.26.0"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "mypy_boto3_bedrock-1.35.1-py3-none-any.whl", hash = "sha256:9dac662518037cad94f29ad1f72dc61d4962157cf47d17bcc099dab1a1bf7075"},
+    {file = "mypy_boto3_bedrock-1.35.1.tar.gz", hash = "sha256:d47ad753d5f84b6ab0204f6c0a7a2d08bcf52314d2640b5f88690ab937404355"},
+]
+
+[package.dependencies]
+typing-extensions = {version = ">=4.1.0", markers = "python_version < \"3.12\""}
+
+[[package]]
 name = "mypy-boto3-s3"
 version = "1.35.2"
 description = "Type annotations for boto3.S3 1.35.2 service generated with mypy-boto3-builder 7.26.0"
@@ -1125,4 +1140,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "43bce147e5ecf42c1f6d42b166e22cff8f21a20b8bc3e720bace43a44fd32d89"
+content-hash = "1754e92e8829bff994b1142508cddc013715a48d2fdcb57d09c73764110b2bcd"
