@@ -9,7 +9,7 @@
     }
   },
   "containerEnv": {
-    "AWS_PROFILE": "dev"
+    "AWS_PROFILE": "school-ai"
   },
   // ensures we are NOT running as root
   "remoteUser": "vscode",

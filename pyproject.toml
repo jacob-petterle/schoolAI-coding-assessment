@@ -8,6 +8,7 @@ authors = [ "Jacob Petterle <jacobpetterle@tai-tutor.team>" ]
 readme = "README.md"
 
   [tool.poetry.dependencies]
+  aws-cdk-cloud-assembly-schema = "2.153.0"
   python = "^3.9"
 
 [tool.poetry.group.dev.dependencies]

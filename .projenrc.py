@@ -16,7 +16,7 @@ API_PROJECT_NAME = "api"
 API_MODULE_NAME = API_PROJECT_NAME.replace("-", "_")
 PYTHON_VERSION = "3.9"
 PYTHON_DEP = f"python@^{PYTHON_VERSION}"
-AWS_PROFILE_NAME = os.getenv("AWS_PROFILE", "default")
+AWS_PROFILE_NAME = os.getenv("AWS_PROFILE", "school-ai")
 
 # Root Project
 ROOT_PROJECT = PythonProject(
@@ -29,6 +29,8 @@ ROOT_PROJECT = PythonProject(
     pytest=False,
     deps=[
         PYTHON_DEP,
+        # pinning because there was an issue on 2024-08-22 with version compatibility with the CLI
+        "aws-cdk-cloud-assembly-schema@2.153.0",
     ],
     dev_deps=[
         f"{IAC_MODULE_NAME}@{{path = './{IAC_PROJECT_NAME}', develop = true}}",
@@ -50,7 +52,14 @@ IAC_PROJECT = PythonProject(
     version="0.0.0",
     description="Infrastructure as Code for the RAG system",
     poetry=True,
-    deps=[PYTHON_DEP, "aws-cdk-lib@^2.0.0", "aws-cdk.aws-lambda-python-alpha@^2.153.0a0", "pinecone-db-construct@^0.0.10"],
+    # pinning because there was an issue on 2024-08-22 with version compatibility with the CDK CLI
+    deps=[
+        PYTHON_DEP,
+        "aws-cdk-lib@2.153.0",
+        "aws-cdk.aws-lambda-python-alpha@^2.153.0a0",
+        "pinecone-db-construct@^0.0.10",
+        "aws-cdk-cloud-assembly-schema@2.153.0",
+    ],
     dev_deps=[
         "pytest@^6.2.5",
     ],

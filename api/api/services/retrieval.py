@@ -43,12 +43,12 @@ class Retrieval:
         retrieval_top_k_override: Optional[int] = None,
         minimum_threshold_override: Optional[float] = None,
     ) -> List[QueryResult]:
-        query_embedding = self._get_embedding(query)
+        query_embedding = self.get_embedding(query)
         initial_results = self._query(query_embedding, retrieval_top_k_override, minimum_threshold_override)
         reranked_results = self._rerank(query, initial_results)
         return reranked_results
 
-    def _get_embedding(self, query: str) -> List[float]:
+    def get_embedding(self, query: str) -> List[float]:
         body = {
             "inputText": query,
         }
@@ -88,18 +88,18 @@ class Retrieval:
 
     def _rerank(self, query: str, results: List[QueryResult]) -> List[QueryResult]:
         query_terms = self._preprocess(query)
-        
+
         reranked_results = []
         for result in results:
             content = result.metadata.get('content', '')
             doc_terms = self._preprocess(content)
-            
+
             tfidf_score = self._tfidf_similarity(query_terms, doc_terms)
             term_overlap = self._term_overlap(query_terms, doc_terms)
-            
+
             combined_score = 0.4 * result.score + 0.4 * tfidf_score + 0.2 * term_overlap
             reranked_results.append((combined_score, result))
-        
+
         reranked_results.sort(reverse=True, key=lambda x: x[0])
         return [result for _, result in reranked_results]
 
@@ -111,12 +111,12 @@ class Retrieval:
         # Simple TF-IDF implementation
         doc_freq = Counter(doc_terms)
         query_freq = Counter(query_terms)
-        
+
         doc_magnitude = math.sqrt(sum(freq**2 for freq in doc_freq.values()))
         query_magnitude = math.sqrt(sum(freq**2 for freq in query_freq.values()))
-        
+
         dot_product = sum(doc_freq[term] * query_freq[term] for term in query_terms)
-        
+
         if doc_magnitude == 0 or query_magnitude == 0:
             return 0
         return dot_product / (doc_magnitude * query_magnitude)

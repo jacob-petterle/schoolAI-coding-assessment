@@ -21,6 +21,11 @@
       "type": "devenv"
     },
     {
+      "name": "aws-cdk-cloud-assembly-schema",
+      "version": "2.153.0",
+      "type": "runtime"
+    },
+    {
       "name": "python",
       "version": "^3.9",
       "type": "runtime"

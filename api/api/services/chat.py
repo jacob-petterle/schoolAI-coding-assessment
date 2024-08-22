@@ -1,7 +1,9 @@
 import json
 from typing import List, Dict, Any, Optional, Tuple
+
+import numpy as np
 from aws_lambda_powertools import Logger
-from aws_lambda_powertools.utilities.parameters import get_secret
+from pydantic import BaseModel
 
 from api.settings import Settings
 from api.boto3_clients import BEDROCK_CLIENT
@@ -9,6 +11,13 @@ from api.services.retrieval import RETRIEVAL, QueryResult
 from api.services.cache import CACHE_SERVICE
 
 logger = Logger()
+
+
+class ChatResponse(BaseModel):
+
+    response: str
+    relevancy: float
+
 
 class ChatService:
 
@@ -22,16 +31,24 @@ class ChatService:
         query: str,
         retrieve_top_k_override: Optional[int] = None,
         minimum_threshold_override: Optional[float] = None,
-    ) -> Tuple[str, List[QueryResult]]:
+    ) -> Tuple[ChatResponse, List[QueryResult]]:
         relevant_docs = RETRIEVAL.query(query, retrieve_top_k_override, minimum_threshold_override)
         if cache_val := CACHE_SERVICE.get(query):
             logger.info(f"Cache hit for query: {query}")
-            return cache_val, relevant_docs
+            return ChatResponse.model_validate_json(cache_val), relevant_docs
         context = self._prepare_context(relevant_docs)
         prompt = self._prepare_prompt(query, context)
         response = self._generate_bedrock_response(prompt)
-        CACHE_SERVICE.set(query, response, self._cache_ttl)
-        return response, relevant_docs
+        relevancy = self._get_chat_relevancy(response, query)
+        chat_response = ChatResponse(response=response, relevancy=relevancy)
+        CACHE_SERVICE.set(query, chat_response.model_dump_json(), self._cache_ttl)
+        return ChatResponse(response=response, relevancy=relevancy), relevant_docs
+
+    def _get_chat_relevancy(self, response: str, query: str) -> float:
+        response_embedding = RETRIEVAL.get_embedding(response)
+        query_embedding = RETRIEVAL.get_embedding(query)
+        similarity = np.dot(response_embedding, query_embedding) / (np.linalg.norm(response_embedding) * np.linalg.norm(query_embedding))
+        return similarity
 
     def _prepare_context(self, relevant_docs: List[QueryResult]) -> str:
         context_parts = []

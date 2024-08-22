@@ -17,6 +17,7 @@ ROUTER = APIRouter(prefix=f"/{module_name}", tags=[module_name])
 
 class ChatResponse(BaseModel):
     response: str
+    relevancy: float
     supporting_docs: List[QueryResult]
 
 
@@ -26,4 +27,4 @@ def chat(request: QueryRequest) -> ChatResponse:
     converted_docs = []
     for doc in docs:
         converted_docs.append(QueryResult(id=doc.id, score=doc.score, metadata=doc.metadata))
-    return ChatResponse(response=response, supporting_docs=converted_docs)
+    return ChatResponse(response=response.response, relevancy=response.relevancy, supporting_docs=converted_docs)
