@@ -21,6 +21,16 @@
       "type": "runtime"
     },
     {
+      "name": "numpy",
+      "version": "^1.26.0",
+      "type": "runtime"
+    },
+    {
+      "name": "pinecone",
+      "version": "^5.0.1",
+      "type": "runtime"
+    },
+    {
       "name": "pydantic-settings",
       "version": "^2.4.0",
       "type": "runtime"

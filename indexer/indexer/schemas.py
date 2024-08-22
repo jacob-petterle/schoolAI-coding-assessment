@@ -10,6 +10,7 @@ class RawData(BaseModel):
     distractor2: str
     correct_answer: str
     support: str
+    document_id: str
 
 
 class TransformedData(BaseModel):
@@ -17,9 +18,10 @@ class TransformedData(BaseModel):
     question: str
     correct_answer: str
     support: str
+    document_id: str
 
 
-class TransformedDataWithEmbedding(BaseModel):
+class TransformedDataWithEmbedding(TransformedData):
 
     question: str
     correct_answer: str

@@ -20,6 +20,7 @@ class Transform:
                     question=record.question,
                     correct_answer=record.correct_answer,
                     support=record.support,
+                    document_id=record.document_id,
                 )
             )
         transformed_records = self.generate_embeddings(transformed_records)
@@ -47,6 +48,7 @@ class Transform:
             correct_answer=record.correct_answer,
             support=record.support,
             embedding=embedding,
+            document_id=record.document_id,
         )
         return with_embedding
 

@@ -5,6 +5,8 @@ from mangum import Mangum
 
 from api.settings import Settings
 from api.routers.documents import ROUTER as DOCUMENTS_ROUTER
+from api.routers.retrieval import ROUTER as RETRIEVAL_ROUTER
+from api.routers.chat import ROUTER as CHAT_ROUTER
 
 
 SETTINGS = Settings()
@@ -22,6 +24,8 @@ def health_check():
 ROUTERS = [
     ROUTER,
     DOCUMENTS_ROUTER,
+    RETRIEVAL_ROUTER,
+    CHAT_ROUTER,
 ]
 
 

@@ -25,7 +25,10 @@ class Extract:
                 local_path = self._download_from_s3(s3_key)
                 records = self._from_parquet(local_path)
                 for record in records:
-                    raw_data = RawData.model_validate(record)
+                    raw_data = RawData(
+                        document_id=s3_key,
+                        **record
+                    )
                     extracted_records.append(raw_data)
             except Exception as e:
                 failed_records.append({"s3_key": s3_key, "error": str(e)})

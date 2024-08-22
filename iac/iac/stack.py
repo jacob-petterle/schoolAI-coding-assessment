@@ -105,9 +105,9 @@ class RAGStack(Stack):
         )
 
         bucket.add_event_notification(s3.EventType.OBJECT_CREATED, s3n.SqsDestination(queue))  # type: ignore
-        bucket.add_event_notification(s3.EventType.OBJECT_REMOVED_DELETE, s3n.SqsDestination(queue))  # type: ignore
+        bucket.add_event_notification(s3.EventType.OBJECT_REMOVED, s3n.SqsDestination(queue))  # type: ignore
 
-        secret = secretsmanager.Secret(
+        pinecone_api_secret = secretsmanager.Secret(
             self,
             "PineconeDBSecret",
             secret_string_value=SecretValue.unsafe_plain_text("737e4430-844a-44fa-b920-b963137fa117"),
@@ -122,18 +122,19 @@ class RAGStack(Stack):
             memory_size_mb=512,
             environment=IndexerSettings(
                 s3_bucket_name=bucket.bucket_name,
-                pinecone_api_key_secret_name=secret.secret_name,
+                pinecone_api_key_secret_name=pinecone_api_secret.secret_name,
             ),
+            secret_names_to_read=[pinecone_api_secret.secret_name],
         )
 
-        lambda_function, _ = self._get_lambda(lambda_config)
-        lambda_function.add_to_role_policy(
+        indexer_lambda, _ = self._get_lambda(lambda_config)
+        indexer_lambda.add_to_role_policy(
             statement=iam.PolicyStatement(
                 actions=["bedrock:InvokeModel"],
                 resources=["*"],
             )
         )
-        lambda_function.add_event_source(
+        indexer_lambda.add_event_source(
             lambda_events.SqsEventSource(
                 queue,
                 batch_size=3,
@@ -141,7 +142,7 @@ class RAGStack(Stack):
                 max_concurrency=2,
             )
         )
-        bucket.grant_read(lambda_function)
+        bucket.grant_read_write(indexer_lambda)
 
         api_lambda_config = LambdaConfig(
             construct_id="RAGApiLambda",
@@ -156,8 +157,9 @@ class RAGStack(Stack):
             ),
             environment=ApiSettings(
                 s3_bucket_name=bucket.bucket_name,
-                pinecone_api_key_secret_name=secret.secret_name,
+                pinecone_api_key_secret_name=pinecone_api_secret.secret_name,
             ),
+            secret_names_to_read=[pinecone_api_secret.secret_name],
         )
         api_lambda, function_url = self._get_lambda(api_lambda_config)
         bucket.grant_read_write(api_lambda)
@@ -168,7 +170,7 @@ class RAGStack(Stack):
             "PineconeIndex",
             index_settings=[
                 PineconeIndexSettings(
-                    api_key_secret_name=secret.secret_name,  # store as a string in secrets manager, NOT a key/value secret
+                    api_key_secret_name=pinecone_api_secret.secret_name,  # store as a string in secrets manager, NOT a key/value secret
                     dimension=1536,
                     removal_policy=RemovalPolicy.DESTROY,
                     pod_spec=ServerlessSpec(
@@ -219,7 +221,7 @@ class RAGStack(Stack):
             tracing=config.xray_tracing,
         )
         for secret_name in config.secret_names_to_read or []:
-            secret = secretsmanager.Secret.from_secret_name_v2(self, secret_name, secret_name)
+            secret = secretsmanager.Secret.from_secret_name_v2(self, f"{config.construct_id}{secret_name}", secret_name)
             secret.grant_read(func)
 
         if config.function_url_config:

@@ -92,6 +92,9 @@ INDEXER_PROJECT = PythonProject(
         "pyarrow@^17.0.0",
         "boto3@^1.35.2",
         "pydantic-settings@^2.4.0",
+        "pinecone-client@^5.0.1",
+        # we need to pin this for the pinecone client to work for some reason
+        "urllib3@>=1.26.0,<2.0.0",
     ],
     dev_deps=[
         "pytest@^6.2.5",
@@ -119,6 +122,8 @@ API_PROJECT = PythonProject(
         "aws-lambda-powertools@^2.43.1",
         "pydantic-settings@^2.4.0",
         "python-multipart@^0.0.9",
+        "pinecone@^5.0.1",
+        "numpy@^1.26.0",
     ],
     dev_deps=[
         "pytest@^6.2.5",

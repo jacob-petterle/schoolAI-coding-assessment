@@ -26,6 +26,11 @@
       "type": "runtime"
     },
     {
+      "name": "pinecone-client",
+      "version": "^5.0.1",
+      "type": "runtime"
+    },
+    {
       "name": "pyarrow",
       "version": "^17.0.0",
       "type": "runtime"
@@ -43,6 +48,11 @@
     {
       "name": "python",
       "version": "^3.9",
+      "type": "runtime"
+    },
+    {
+      "name": "urllib3",
+      "version": ">=1.26.0,<2.0.0",
       "type": "runtime"
     },
     {

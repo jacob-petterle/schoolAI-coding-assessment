@@ -19,4 +19,4 @@ class Settings(PydanticBaseSettings):
     s3_bucket_name: str
     pinecone_api_key_secret_name: str
     # Hardcoding because the pinecone construct doesn't expose the index name *yet*
-    pinecone_index_name: str = "ragstack-index0-d41d8cd98f00b204e980"
+    pinecone_host_name: str = "https://ragstack-index0-d41d8cd98f00b204e980-c6xn8rd.svc.apw5-4e34-81fa.pinecone.io"

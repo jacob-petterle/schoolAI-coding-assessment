@@ -1,5 +1,5 @@
 import uuid
-from typing import Dict, List
+from typing import Any, Dict, List
 from fastapi import APIRouter, HTTPException, Path, File, UploadFile
 from botocore.exceptions import ClientError
 from aws_lambda_powertools import Logger
@@ -14,11 +14,17 @@ module_name = __name__.rsplit(".", maxsplit=1)[-1].replace("_", "-")
 ROUTER = APIRouter(prefix=f"/{module_name}", tags=[module_name])
 
 
-@ROUTER.get("/{resource_id}", response_model=Dict[str, str])
-def get_resource(resource_id: str = Path(..., title="The ID of the resource to retrieve")) -> Dict[str, str]:
+@ROUTER.get("/{resource_id}", response_model=Dict[str, Any])
+def get_resource(resource_id: str = Path(..., title="The ID of the resource to retrieve")) -> Dict[str, Any]:
     try:
         response = S3_CLIENT.head_object(Bucket=SETTINGS.s3_bucket_name, Key=resource_id)
-        return {resource_id: response["Metadata"].get("filename", "Unknown")}
+        return {
+            resource_id: {
+                "filename": response["Metadata"].get("filename", "Unknown"),
+                "size": response["Metadata"].get("size", "Unknown"),
+                "indexing_status": response["Metadata"].get("indexing_status", "Unknown"),
+            }
+        }
     except ClientError as e:
         if e.response["Error"]["Code"] == "404":
             raise HTTPException(status_code=404, detail="Resource not found")
@@ -57,3 +63,33 @@ def create_resource(file: UploadFile = File(...)) -> Dict[str, str]:
     except Exception as e:
         LOGGER.error(f"File upload failed: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to upload file")
+
+
+@ROUTER.delete("/{resource_id}", response_model=Dict[str, str])
+def delete_resource(resource_id: str = Path(..., title="The ID of the resource to delete")) -> Dict[str, str]:
+    try:
+        # First, check the indexing status
+        try:
+            response = S3_CLIENT.head_object(Bucket=SETTINGS.s3_bucket_name, Key=resource_id)
+            metadata = response.get("Metadata", {})
+            indexing_status = metadata.get("indexing_status")
+
+            if indexing_status != "COMPLETE":
+                return {"message": "Resource is still being indexed and cannot be deleted at this time"}
+
+        except ClientError as e:
+            if e.response["Error"]["Code"] == "404":
+                raise HTTPException(status_code=404, detail="Resource not found")
+            else:
+                LOGGER.error(f"Error checking resource indexing status: {str(e)}")
+                raise HTTPException(status_code=500, detail="Failed to check resource indexing status")
+
+        # If indexing is complete, proceed with deletion
+        S3_CLIENT.delete_object(Bucket=SETTINGS.s3_bucket_name, Key=resource_id)
+        return {resource_id: "Deleted"}
+    except ClientError as e:
+        if e.response["Error"]["Code"] == "404":
+            raise HTTPException(status_code=404, detail="Resource not found")
+        else:
+            LOGGER.error(f"Error deleting resource: {str(e)}")
+            raise HTTPException(status_code=500, detail="Failed to delete resource")

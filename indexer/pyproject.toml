@@ -10,10 +10,12 @@ readme = "README.md"
   [tool.poetry.dependencies]
   aws-lambda-powertools = "^2.43.1"
   boto3 = "^1.35.2"
+  pinecone-client = "^5.0.1"
   pyarrow = "^17.0.0"
   pydantic-settings = "^2.4.0"
   pydantic = "^2.8.0"
   python = "^3.9"
+  urllib3 = ">=1.26.0,<2.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "7.4.3"
