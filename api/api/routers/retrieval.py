@@ -18,6 +18,7 @@ ROUTER = APIRouter(prefix=f"/{module_name}", tags=[module_name])
 class QueryRequest(BaseModel):
     query: str
     top_k_override: Optional[int] = None
+    minimum_threshold_override: Optional[float] = None
 
 
 class QueryResult(BaseModel):
@@ -33,7 +34,7 @@ class QueryResponse(BaseModel):
 @ROUTER.post("/query", response_model=QueryResponse)
 def query_documents(request: QueryRequest) -> QueryResponse:
     try:
-        results = RETRIEVAL.query(request.query, request.top_k_override)
+        results = RETRIEVAL.query(request.query, request.top_k_override, request.minimum_threshold_override)
 
         return QueryResponse(
             results=[QueryResult(id=result.id, score=result.score, metadata=result.metadata) for result in results]

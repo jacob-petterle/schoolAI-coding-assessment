@@ -163,6 +163,13 @@ class RAGStack(Stack):
         )
         api_lambda, function_url = self._get_lambda(api_lambda_config)
         bucket.grant_read_write(api_lambda)
+        api_lambda.add_to_role_policy(
+            statement=iam.PolicyStatement(
+                actions=["bedrock:InvokeModel"],
+                resources=["*"],
+            )
+        )
+
         CfnOutput(self, "ApiUrl", value=function_url.url)
 
         PineconeIndex(

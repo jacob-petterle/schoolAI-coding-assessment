@@ -7,6 +7,7 @@ from aws_lambda_powertools import Logger
 from api.settings import Settings
 from api.boto3_clients import S3_CLIENT
 
+
 SETTINGS = Settings()  # type: ignore - pulled from the environment
 LOGGER = Logger(level=SETTINGS.log_level)
 
@@ -33,11 +34,11 @@ def get_resource(resource_id: str = Path(..., title="The ID of the resource to r
             raise HTTPException(status_code=500, detail="Failed to retrieve resource")
 
 
-@ROUTER.get("", response_model=List[Dict[str, str]])
-def list_resources() -> List[Dict[str, str]]:
+@ROUTER.get("", response_model=List[Dict[str, Any]])
+def list_resources() -> List[Dict[str, Any]]:
     try:
         response = S3_CLIENT.list_objects_v2(Bucket=SETTINGS.s3_bucket_name)
-        return [{obj["Key"]: obj["Key"]} for obj in response.get("Contents", [])]
+        return [key for key in response.get("Contents", [])]
     except ClientError as e:
         LOGGER.error(f"Error listing resources: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to list resources")
