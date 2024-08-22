@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from fastapi import APIRouter, HTTPException, Body
 from aws_lambda_powertools import Logger
 
@@ -16,23 +16,61 @@ ROUTER = APIRouter(prefix=f"/{module_name}", tags=[module_name])
 
 
 class QueryRequest(BaseModel):
-    query: str
-    top_k_override: Optional[int] = None
-    minimum_threshold_override: Optional[float] = None
+
+    query: str = Field(
+        ...,
+        title="The search query",
+        description="The query string used to search for relevant documents.",
+    )
+    top_k_override: Optional[int] = Field(
+        None,
+        title="Top K override",
+        description="An optional override for the number of top results to return.",
+    )
+    minimum_threshold_override: Optional[float] = Field(
+        None,
+        title="Minimum threshold override",
+        description="An optional override for the minimum similarity threshold.",
+    )
 
 
 class QueryResult(BaseModel):
-    id: str
-    score: float
-    metadata: Dict[str, str]
+
+    id: str = Field(
+        ...,
+        title="Document ID",
+        description="The unique identifier of the document.",
+    )
+    score: float = Field(
+        ...,
+        title="Relevance score",
+        description="The relevance score of the document to the query.",
+    )
+    metadata: Dict[str, str] = Field(
+        ...,
+        title="Document metadata",
+        description="Additional metadata associated with the document.",
+    )
 
 
 class QueryResponse(BaseModel):
-    results: List[QueryResult]
+
+    results: List[QueryResult] = Field(
+        ...,
+        title="Query results",
+        description="A list of documents that match the search query.",
+    )
 
 
 @ROUTER.post("/query", response_model=QueryResponse)
 def query_documents(request: QueryRequest) -> QueryResponse:
+    """
+    Query documents based on the provided search query.
+
+    This endpoint uses a retrieval system to find relevant documents based on
+    the given query. It allows optional overrides for the number of results
+    and the minimum similarity threshold.
+    """
     try:
         results = RETRIEVAL.query(request.query, request.top_k_override, request.minimum_threshold_override)
 

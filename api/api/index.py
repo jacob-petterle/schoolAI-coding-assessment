@@ -1,3 +1,4 @@
+from textwrap import dedent
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from aws_lambda_powertools import Logger
 from fastapi import APIRouter, FastAPI
@@ -36,7 +37,43 @@ def create_app():
 
     app = FastAPI(
         title="SchoolAI RAG coding challenge",
-        description="API for the RAG system",
+        description=dedent("""
+        # SchoolAI RAG System
+
+        This API provides a Retrieval-Augmented Generation (RAG) system for question answering.
+
+        ## How to Use the System
+
+        1. **Add documents**
+            - Use the `POST /documents` endpoint to upload files from the [SciQ dataset](https://allenai.org/data/sciq).
+            - Recommendation: Keep individual resource files to less than 2000 rows to minimize indexing time.
+            - Note: Indexing for a 1000 line file takes about 1 minute.
+
+        2. **Check indexing status**
+            - Use the `GET /documents/{resource_id}` endpoint to check the indexing status of a document.
+
+        3. **Query documents**
+            - Use the `POST /retrieval/query` endpoint to find relevant documents for a given query.
+
+        4. **Chat**
+            - Use the `POST /chat/chat` endpoint to ask questions and get AI-generated responses.
+
+        5. **Delete documents**
+            - Use the `DELETE /documents/{resource_id}` endpoint to remove resources you no longer need.
+
+        ## Example Question
+
+        > "What percentage of earth is covered in water?"
+
+        ## Important Notes
+
+        - This system only works with the SciQ dataset. Ensure your uploaded documents are from this dataset for optimal performance.
+        - Indexing time varies based on document size. Be patient after uploading large documents.
+        - You can delete resources that are no longer needed to manage your dataset.
+
+        For more details on each endpoint, refer to the specific endpoint documentation below.
+        """
+        ),
         version="0.0.0",
     )
 

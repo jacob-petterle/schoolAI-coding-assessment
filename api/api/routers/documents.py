@@ -17,6 +17,12 @@ ROUTER = APIRouter(prefix=f"/{module_name}", tags=[module_name])
 
 @ROUTER.get("/{resource_id}", response_model=Dict[str, Any])
 def get_resource(resource_id: str = Path(..., title="The ID of the resource to retrieve")) -> Dict[str, Any]:
+    """
+    Retrieve metadata for a specific resource by its ID.
+
+    This endpoint fetches metadata about a resource stored in S3, including its filename,
+    size, and indexing status.
+    """
     try:
         response = S3_CLIENT.head_object(Bucket=SETTINGS.s3_bucket_name, Key=resource_id)
         return {
@@ -36,6 +42,11 @@ def get_resource(resource_id: str = Path(..., title="The ID of the resource to r
 
 @ROUTER.get("", response_model=List[Dict[str, Any]])
 def list_resources() -> List[Dict[str, Any]]:
+    """
+    List all resources stored in the S3 bucket.
+
+    This endpoint retrieves a list of all objects stored in the configured S3 bucket.
+    """
     try:
         response = S3_CLIENT.list_objects_v2(Bucket=SETTINGS.s3_bucket_name)
         return [key for key in response.get("Contents", [])]
@@ -46,6 +57,12 @@ def list_resources() -> List[Dict[str, Any]]:
 
 @ROUTER.post("", response_model=Dict[str, str])
 def create_resource(file: UploadFile = File(...)) -> Dict[str, str]:
+    """
+    Upload a new resource to the S3 bucket to index it in the Pinecone index.
+
+    This endpoint allows uploading a file to the S3 bucket which triggers the indexing process.
+    It generates a unique resource ID and stores metadata about the file.
+    """
     try:
         resource_id = str(uuid.uuid4())
         contents = file.file.read()
@@ -68,8 +85,13 @@ def create_resource(file: UploadFile = File(...)) -> Dict[str, str]:
 
 @ROUTER.delete("/{resource_id}", response_model=Dict[str, str])
 def delete_resource(resource_id: str = Path(..., title="The ID of the resource to delete")) -> Dict[str, str]:
+    """
+    Delete a resource from the S3 bucket.
+
+    This endpoint deletes a resource from the S3 bucket. It first checks if the
+    resource's indexing is complete before allowing deletion.
+    """
     try:
-        # First, check the indexing status
         try:
             response = S3_CLIENT.head_object(Bucket=SETTINGS.s3_bucket_name, Key=resource_id)
             metadata = response.get("Metadata", {})
@@ -85,7 +107,6 @@ def delete_resource(resource_id: str = Path(..., title="The ID of the resource t
                 LOGGER.error(f"Error checking resource indexing status: {str(e)}")
                 raise HTTPException(status_code=500, detail="Failed to check resource indexing status")
 
-        # If indexing is complete, proceed with deletion
         S3_CLIENT.delete_object(Bucket=SETTINGS.s3_bucket_name, Key=resource_id)
         return {resource_id: "Deleted"}
     except ClientError as e:
