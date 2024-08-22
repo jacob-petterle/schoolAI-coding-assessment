@@ -27,7 +27,7 @@ class Transform:
         return transformed_records
 
     def generate_embeddings(self, records: List[TransformedData]) -> List[TransformedDataWithEmbedding]:
-        with ThreadPoolExecutor(max_workers=len(records)) as executor:
+        with ThreadPoolExecutor(max_workers=300) as executor:
             transformed_records = list(executor.map(self._get_embedding, records))
         return transformed_records
 

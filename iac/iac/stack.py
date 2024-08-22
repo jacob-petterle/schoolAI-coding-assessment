@@ -13,6 +13,7 @@ import aws_cdk.aws_iam as iam
 import aws_cdk.aws_lambda_event_sources as lambda_events
 import aws_cdk.aws_secretsmanager as secretsmanager
 import aws_cdk.aws_lambda_python_alpha as lambda_alpha
+import aws_cdk.aws_dynamodb as dynamodb
 from aws_cdk import RemovalPolicy, Stack, Duration, Size, CfnOutput, SecretValue
 from pydantic_settings import BaseSettings
 from pinecone_db_construct import (
@@ -101,7 +102,7 @@ class RAGStack(Stack):
         queue = sqs.Queue(
             self,
             "RAGQueue",
-            visibility_timeout=Duration.seconds(120),
+            visibility_timeout=Duration.seconds(430),
         )
 
         bucket.add_event_notification(s3.EventType.OBJECT_CREATED, s3n.SqsDestination(queue))  # type: ignore
@@ -118,8 +119,8 @@ class RAGStack(Stack):
             description="Index documents from S3 bucket",
             index_directory="../indexer",
             index_module_path="indexer/index.py",
-            timeout=Duration.seconds(60),
-            memory_size_mb=512,
+            timeout=Duration.seconds(420),
+            memory_size_mb=2048,
             environment=IndexerSettings(
                 s3_bucket_name=bucket.bucket_name,
                 pinecone_api_key_secret_name=pinecone_api_secret.secret_name,
@@ -143,6 +144,14 @@ class RAGStack(Stack):
             )
         )
         bucket.grant_read_write(indexer_lambda)
+        ttl_column_name = "ttl"
+        partition_key_column_name = "key"
+        cache_table = dynamodb.TableV2(
+            self,
+            "CacheTable",
+            partition_key=dynamodb.Attribute(name=partition_key_column_name, type=dynamodb.AttributeType.STRING),
+            time_to_live_attribute=ttl_column_name,
+        )
 
         api_lambda_config = LambdaConfig(
             construct_id="RAGApiLambda",
@@ -158,11 +167,15 @@ class RAGStack(Stack):
             environment=ApiSettings(
                 s3_bucket_name=bucket.bucket_name,
                 pinecone_api_key_secret_name=pinecone_api_secret.secret_name,
+                cache_table_name=cache_table.table_name,
+                cache_table_ttl_column_name=ttl_column_name,
+                partition_key_column_name=partition_key_column_name,
             ),
             secret_names_to_read=[pinecone_api_secret.secret_name],
         )
         api_lambda, function_url = self._get_lambda(api_lambda_config)
         bucket.grant_read_write(api_lambda)
+        cache_table.grant_read_write_data(api_lambda)
         api_lambda.add_to_role_policy(
             statement=iam.PolicyStatement(
                 actions=["bedrock:InvokeModel"],

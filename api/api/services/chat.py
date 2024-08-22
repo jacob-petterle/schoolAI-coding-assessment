@@ -6,13 +6,16 @@ from aws_lambda_powertools.utilities.parameters import get_secret
 from api.settings import Settings
 from api.boto3_clients import BEDROCK_CLIENT
 from api.services.retrieval import RETRIEVAL, QueryResult
+from api.services.cache import CACHE_SERVICE
 
 logger = Logger()
 
 class ChatService:
+
     def __init__(self, settings: Settings):
         self.settings = settings
         self.model_id = settings.chat_model_id
+        self._cache_ttl = 15
 
     def generate_response(
         self,
@@ -21,9 +24,13 @@ class ChatService:
         minimum_threshold_override: Optional[float] = None,
     ) -> Tuple[str, List[QueryResult]]:
         relevant_docs = RETRIEVAL.query(query, retrieve_top_k_override, minimum_threshold_override)
+        if cache_val := CACHE_SERVICE.get(query):
+            logger.info(f"Cache hit for query: {query}")
+            return cache_val, relevant_docs
         context = self._prepare_context(relevant_docs)
         prompt = self._prepare_prompt(query, context)
         response = self._generate_bedrock_response(prompt)
+        CACHE_SERVICE.set(query, response, self._cache_ttl)
         return response, relevant_docs
 
     def _prepare_context(self, relevant_docs: List[QueryResult]) -> str:

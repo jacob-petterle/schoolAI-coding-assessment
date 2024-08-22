@@ -24,3 +24,6 @@ class Settings(PydanticBaseSettings):
     retrieval_top_k: int = 10
     retrieval_min_score: float = 80.0
     chat_model_id: str = ModelId.META_LLAMA3_70B_INSTRUCT_V1.value
+    cache_table_name: str
+    cache_table_ttl_column_name: str = "ttl"
+    partition_key_column_name: str = "key"
