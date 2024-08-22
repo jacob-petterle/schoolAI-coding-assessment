@@ -10,3 +10,6 @@ class Settings(PydanticBaseSettings):
     )
     log_level: str = "DEBUG"
     s3_bucket_name: str
+    pinecone_api_key_secret_name: str
+    # Hardcoding because the pinecone construct doesn't expose the index name *yet*
+    pinecone_index_name: str = "ragstack-index0-d41d8cd98f00b204e980"

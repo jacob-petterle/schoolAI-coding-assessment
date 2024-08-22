@@ -8,7 +8,7 @@ authors = [ "Jacob Petterle <jacobpetterle@tai-tutor.team>" ]
 readme = "README.md"
 
   [tool.poetry.dependencies]
-  python = "^3.10"
+  python = "^3.9"
 
 [tool.poetry.group.dev.dependencies]
 projen = "0.81.1"

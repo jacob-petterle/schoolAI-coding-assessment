@@ -22,7 +22,7 @@
     },
     {
       "name": "python",
-      "version": "^3.10",
+      "version": "^3.9",
       "type": "runtime"
     }
   ],

@@ -1,5 +1,5 @@
 {
-  "name": "Node.js & TypeScript",
+  "name": "Python",
   "build": {
     "dockerfile": "./Dockerfile",
     "context": "..",

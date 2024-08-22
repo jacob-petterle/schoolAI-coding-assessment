@@ -14,7 +14,7 @@ INDEXER_PROJECT_NAME = "indexer"
 INDEXER_MODULE_NAME = INDEXER_PROJECT_NAME.replace("-", "_")
 API_PROJECT_NAME = "api"
 API_MODULE_NAME = API_PROJECT_NAME.replace("-", "_")
-PYTHON_VERSION = "3.10"
+PYTHON_VERSION = "3.9"
 PYTHON_DEP = f"python@^{PYTHON_VERSION}"
 AWS_PROFILE_NAME = os.getenv("AWS_PROFILE", "default")
 
@@ -50,7 +50,7 @@ IAC_PROJECT = PythonProject(
     version="0.0.0",
     description="Infrastructure as Code for the RAG system",
     poetry=True,
-    deps=[PYTHON_DEP, "aws-cdk-lib@^2.0.0", "aws-cdk.aws-lambda-python-alpha@^2.153.0a0"],
+    deps=[PYTHON_DEP, "aws-cdk-lib@^2.0.0", "aws-cdk.aws-lambda-python-alpha@^2.153.0a0", "pinecone-db-construct@^0.0.10"],
     dev_deps=[
         "pytest@^6.2.5",
     ],

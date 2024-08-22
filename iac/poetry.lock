@@ -69,39 +69,56 @@ typeguard = ">=2.13.3,<2.14.0"
 
 [[package]]
 name = "aws-cdk-aws-lambda-python-alpha"
-version = "2.153.0a0"
+version = "2.154.0a0"
 description = "The CDK Construct Library for AWS Lambda in Python"
 optional = false
 python-versions = "~=3.8"
 files = [
-    {file = "aws-cdk.aws-lambda-python-alpha-2.153.0a0.tar.gz", hash = "sha256:bda9719eabc4c4d911d2022694e96481e0c8341ac1b0fd41a2c935ee27dce170"},
-    {file = "aws_cdk.aws_lambda_python_alpha-2.153.0a0-py3-none-any.whl", hash = "sha256:2a970a7a3d2da030317720a68baa33053cb548c218aa9290b5e18fd04c7fd97c"},
+    {file = "aws_cdk.aws_lambda_python_alpha-2.154.0a0-py3-none-any.whl", hash = "sha256:e0a1a362064cc33a69f5d3825c3adb2694b29bdbbd195dd75611bd7212095ede"},
+    {file = "aws_cdk_aws_lambda_python_alpha-2.154.0a0.tar.gz", hash = "sha256:608bd825b3babc512c5887d2d015c8e56fda01275e5772f92905b1e2a709dbcd"},
 ]
 
 [package.dependencies]
-aws-cdk-lib = ">=2.153.0,<3.0.0"
+aws-cdk-lib = ">=2.154.0,<3.0.0"
 constructs = ">=10.0.0,<11.0.0"
-jsii = ">=1.101.0,<2.0.0"
+jsii = ">=1.102.0,<2.0.0"
+publication = ">=0.0.3"
+typeguard = ">=2.13.3,<2.14.0"
+
+[[package]]
+name = "aws-cdk-cloud-assembly-schema"
+version = "36.0.14"
+description = "Cloud Assembly Schema"
+optional = false
+python-versions = "~=3.8"
+files = [
+    {file = "aws_cdk.cloud_assembly_schema-36.0.14-py3-none-any.whl", hash = "sha256:0553d22230d8faf241a9089c2aced3f767fd391eff97788cb0a8b997f49e1854"},
+    {file = "aws_cdk_cloud_assembly_schema-36.0.14.tar.gz", hash = "sha256:12c6b7b0724b9ebb1003111a1e677384ee7760efd7a0bcec9cc73da4dacd5c7a"},
+]
+
+[package.dependencies]
+jsii = ">=1.102.0,<2.0.0"
 publication = ">=0.0.3"
 typeguard = ">=2.13.3,<2.14.0"
 
 [[package]]
 name = "aws-cdk-lib"
-version = "2.153.0"
+version = "2.154.0"
 description = "Version 2 of the AWS Cloud Development Kit library"
 optional = false
 python-versions = "~=3.8"
 files = [
-    {file = "aws-cdk-lib-2.153.0.tar.gz", hash = "sha256:7cda51150c3615e9429329dc08fa0403822e64a749940ab032d65506fb88ff62"},
-    {file = "aws_cdk_lib-2.153.0-py3-none-any.whl", hash = "sha256:1357ccb460a5340c4135307e9d03be3dc09294c14f89881968e9104583be110f"},
+    {file = "aws_cdk_lib-2.154.0-py3-none-any.whl", hash = "sha256:b436765039a14b726ecb6d0a9f0cae604fab6c61740d6945041b77970c074f50"},
+    {file = "aws_cdk_lib-2.154.0.tar.gz", hash = "sha256:d1d188939d53e6d899927042d8619af2de560edb9c646cff985d76e06bd10291"},
 ]
 
 [package.dependencies]
 "aws-cdk.asset-awscli-v1" = ">=2.2.202,<3.0.0"
 "aws-cdk.asset-kubectl-v20" = ">=2.1.2,<3.0.0"
 "aws-cdk.asset-node-proxy-agent-v6" = ">=2.0.3,<3.0.0"
+"aws-cdk.cloud-assembly-schema" = ">=36.0.5,<37.0.0"
 constructs = ">=10.0.0,<11.0.0"
-jsii = ">=1.101.0,<2.0.0"
+jsii = ">=1.102.0,<2.0.0"
 publication = ">=0.0.3"
 typeguard = ">=2.13.3,<2.14.0"
 
@@ -173,18 +190,25 @@ test = ["pytest (>=6)"]
 
 [[package]]
 name = "importlib-resources"
-version = "6.4.3"
+version = "6.4.4"
 description = "Read resources from Python packages"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "importlib_resources-6.4.3-py3-none-any.whl", hash = "sha256:2d6dfe3b9e055f72495c2085890837fc8c758984e209115c8792bddcb762cd93"},
-    {file = "importlib_resources-6.4.3.tar.gz", hash = "sha256:4a202b9b9d38563b46da59221d77bb73862ab5d79d461307bcb826d725448b98"},
+    {file = "importlib_resources-6.4.4-py3-none-any.whl", hash = "sha256:dda242603d1c9cd836c3368b1174ed74cb4049ecd209e7a1a0104620c18c5c11"},
+    {file = "importlib_resources-6.4.4.tar.gz", hash = "sha256:20600c8b7361938dc0bb2d5ec0297802e575df486f5a544fa414da65e13721f7"},
 ]
 
+[package.dependencies]
+zipp = {version = ">=3.1.0", markers = "python_version < \"3.10\""}
+
 [package.extras]
+check = ["pytest-checkdocs (>=2.4)", "pytest-ruff (>=0.2.1)"]
+cover = ["pytest-cov"]
 doc = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (>=3.5)", "sphinx-lint"]
-test = ["jaraco.test (>=5.4)", "pytest (>=6,!=8.1.*)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-mypy", "pytest-ruff (>=0.2.1)", "zipp (>=3.17)"]
+enabler = ["pytest-enabler (>=2.2)"]
+test = ["jaraco.test (>=5.4)", "pytest (>=6,!=8.1.*)", "zipp (>=3.17)"]
+type = ["pytest-mypy"]
 
 [[package]]
 name = "iniconfig"
@@ -227,6 +251,25 @@ files = [
     {file = "packaging-24.1-py3-none-any.whl", hash = "sha256:5b8f2217dbdbd2f7f384c41c628544e6d52f2d0f53c6d0c3ea61aa5d1d7ff124"},
     {file = "packaging-24.1.tar.gz", hash = "sha256:026ed72c8ed3fcce5bf8950572258698927fd1dbda10a5e981cdf0ac37f4f002"},
 ]
+
+[[package]]
+name = "pinecone-db-construct"
+version = "0.0.10"
+description = "A CDK construct for Pinecone Indexes"
+optional = false
+python-versions = "~=3.8"
+files = [
+    {file = "pinecone-db-construct-0.0.10.tar.gz", hash = "sha256:849cb84e514af40940f9d108ec95b049fdd72fdc3b1eb2424f3f3010bff1ac7f"},
+    {file = "pinecone_db_construct-0.0.10-py3-none-any.whl", hash = "sha256:972f90dae8467242682eea98f4224c315b698698f51c603828214681a99158ce"},
+]
+
+[package.dependencies]
+"aws-cdk.aws-lambda-python-alpha" = ">=2.100.0.a0,<3.0.0"
+aws-cdk-lib = ">=2.118.0,<3.0.0"
+constructs = ">=10.0.5,<11.0.0"
+jsii = ">=1.94.0,<2.0.0"
+publication = ">=0.0.3"
+typeguard = ">=2.13.3,<2.14.0"
 
 [[package]]
 name = "pluggy"
@@ -338,7 +381,22 @@ files = [
     {file = "typing_extensions-4.12.2.tar.gz", hash = "sha256:1a7ead55c7e559dd4dee8856e3a88b41225abfe1ce8df57b7c13915fe121ffb8"},
 ]
 
+[[package]]
+name = "zipp"
+version = "3.20.0"
+description = "Backport of pathlib-compatible object wrapper for zip files"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "zipp-3.20.0-py3-none-any.whl", hash = "sha256:58da6168be89f0be59beb194da1250516fdaa062ccebd30127ac65d30045e10d"},
+    {file = "zipp-3.20.0.tar.gz", hash = "sha256:0145e43d89664cfe1a2e533adc75adafed82fe2da404b4bbb6b026c0157bdb31"},
+]
+
+[package.extras]
+doc = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (>=3.5)", "sphinx-lint"]
+test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more-itertools", "pytest (>=6,!=8.1.*)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-ignore-flaky", "pytest-mypy", "pytest-ruff (>=0.2.1)"]
+
 [metadata]
 lock-version = "2.0"
-python-versions = "^3.10"
-content-hash = "82ea57e6964290cceb4eb1b604b5d113861605cc275425101acbea447f7b21f1"
+python-versions = "^3.9"
+content-hash = "84c58e6fdd12a2a94c0bea28d6bf0c2e30d4e3afee0760241674f86692fe373a"
