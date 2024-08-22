@@ -3,11 +3,26 @@
 ## Objective
 Develop a simple question-answering system using a Retrieval-Augmented Generation (RAG) framework. The system should embed documents from a public dataset, retrieve relevant information based on a user query, and generate an appropriate response.
 
-## Running the system
+## Getting Started
 
 [API Endpoint to interact with the system](https://baegno7hpbbyub7fcfzrgkvvsu0lsqhx.lambda-url.us-east-1.on.aws/docs#/)
 
-If it's desired to deploy the system to AWS:
+### Repo Structure:
+- `api/api/`: contains the API code for the system
+  - `routers/`: contains the FastAPI routers for the system
+  - `services/`: contains the services for the system
+    - `retrieval.py`: contains the retrieval logic for the system
+    - `chat.py`: contains the chat logic for the system
+    - `cache.py`: contains the cache logic for the system
+- `indexer/indexer/`: contains the ETL code for the system
+  - `services/`: contains the services for the system
+    - `extract.py`: contains the extraction logic for the system
+    - `transform.py`: contains the transformation logic for the system including data cleaning and embedding
+    - `load.py`: contains the loading logic for the system to load the embeddings into Pinecone and mark the document as indexed in S3
+  - `iac/iac/`: contains the CDK code for the system
+    - `stack.py`: contains the CDK stack for the system
+
+### Deploying the application:
 
 **Prerequisites:**
 - configure aws profile as `school-ai` following [aws docs](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html#cli-configure-sso-configure) 
